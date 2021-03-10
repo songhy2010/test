@@ -1,3 +1,4 @@
+<%@page import="com.model.MemberDTO"%>
 <%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
    
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -16,6 +17,12 @@
 	
 	</style>
 	<body style="text-align: center;">
+	
+	
+	<%
+		MemberDTO loginDto =(MemberDTO)session.getAttribute("info");
+	
+	%>
 
 		<!-- Wrapper -->
 			<div id="wrapper">
@@ -23,11 +30,13 @@
 					<nav id="Update">	
 						<ul class="actions vertical">
 							<li><h5>회원정보수정</h5></li>
-								<form>
-									<li>접속한 Email : 세션영역에 저장된 email을 출력하시오.</li>
-									<li><input type="password" placeholder="PW를 입력하세요" style="width: 500px; margin: 0 auto;"></li>
-									<li><input type="text" placeholder="전화번호를 입력하세요" style="width: 500px; margin: 0 auto;"></li>
-									<li><input type="text" placeholder="집주소를 입력하세요" style="width: 500px; margin: 0 auto;"></li>
+								<form action = 'UpdateServiceCon' method="post">
+								<%if(loginDto != null) {%>
+									<li>접속한 Email : <%=loginDto.getEmail() %></li>
+								<%} %>
+									<li><input type="password" name = 'pw' placeholder="PW를 입력하세요" style="width: 500px; margin: 0 auto;"></li>
+									<li><input type="text" name = 'tel' placeholder="전화번호를 입력하세요" style="width: 500px; margin: 0 auto;"></li>
+									<li><input type="text" name = 'addr' placeholder="집주소를 입력하세요" style="width: 500px; margin: 0 auto;"></li>
 									<li><input type="submit" value="JoinUs" class="button fit" style="width: 500px; margin: 0 auto;"></li>
 								</form>
 						</ul>
