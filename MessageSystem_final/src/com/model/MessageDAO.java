@@ -7,17 +7,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-
-
-public class MemberDAO {
+public class MessageDAO {
 	
 	PreparedStatement psmt = null;
 	Connection conn = null;
 	int cnt = 0;
 	ResultSet rs = null;
-	MemberDTO info = null;
-	MemberDTO loginDto = null;
-	ArrayList<MemberDTO> list = null;
+	MessageDTO mDto = null;
+	ArrayList<MessageDTO> mList = null;
 	
 	public void conn() {
 		try {
@@ -52,102 +49,86 @@ public class MemberDAO {
 		
 	}
 	
-
-	
-	
-	public int join(MemberDTO dto) {
-		conn();
-		try {
-			
-			String sql = "insert into web_member values(?,?,?,?)";
-			psmt = conn.prepareStatement(sql);
-			psmt.setString(1, dto.getEmail());
-			psmt.setString(2, dto.getPw());
-			psmt.setString(3, dto.getTel());
-			psmt.setString(4, dto.getAddr());
-			cnt = psmt.executeUpdate();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally {
-			close();
-		}
-		return cnt;
-	
-	}
-	
-	public MemberDTO login(MemberDTO dto) { /* 타입이 MemberDTO */
+	public int insert(MessageDTO dto) {
 		conn();
 		
 		try {
-			String sql = "select * from web_member where email =? and pw = ?";
+			String sql = "insert into message values(num.nextval, ? ,?,?,sysdate)";
 			psmt = conn.prepareStatement(sql);
-			psmt.setString(1, dto.getEmail());
-			psmt.setString(2, dto.getPw());
-			rs = psmt.executeQuery();
-			
-			if(rs.next()) {
-				String email = rs.getString(1);
-				String pw = rs.getString(2);
-				String tel = rs.getString(3);
-				String addr = rs.getString(4);
-				
-				loginDto = new MemberDTO(email,pw,tel,addr);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally {
-			close();
-		}
-		return loginDto;
-	}
-	
-	public int update(MemberDTO dto) {
-		conn();
-		try {
-			String sql = "update web_member set pw=?, tel =?, address =? where email= ?";
-			
-			psmt = conn.prepareStatement(sql);
-			psmt.setString(1, dto.getPw());
-			psmt.setString(2, dto.getTel());
-			psmt.setString(3, dto.getAddr());
-			psmt.setString(4, dto.getEmail());
+			psmt.setString(1, dto.getSend());
+			psmt.setString(2, dto.getReceive());
+			psmt.setString(3, dto.getContent());
 			cnt = psmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
 			close();
 		}
-		
 		return cnt;
 	}
 	
-	public ArrayList<MemberDTO> select() {
-		list = new ArrayList<MemberDTO>(); //꼭 객체생성하고 사용하기
+	public ArrayList<MessageDTO> select(String email) {
+		mList = new ArrayList<MessageDTO>();
 		conn();
+		
 		try {
-			String sql = "select * from Web_member";
+			String sql = "select * from Message where receive = ?";
 			psmt = conn.prepareStatement(sql);
+			psmt.setString(1, email);
 			rs = psmt.executeQuery();
 			
 			while(rs.next()) {
+				int num = rs.getInt(1);
+				String send = rs.getString(2);
+				String recevie = rs.getString(3);
+				String content = rs.getString(4);
+				String date = rs.getString(5);
 				
-				String email = rs.getString(1);
-				String pw = rs.getString(2);
-				String tel = rs.getString(3);
-				String addr = rs.getString(4);
-				
-				info = new MemberDTO(email,pw,tel,addr);
-				list.add(info);
+				mDto = new MessageDTO(num, recevie, send, content, date);
+				mList.add(mDto);
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
 			close();
 		}
-		
-		return list;
+		return mList;
 	}
 	
+	public int DeleteAll(String email) {
+		conn();
+		
+		
+		try {
+			String sql = "delete from Message where receive=?";
+			psmt = conn.prepareStatement(sql);
+			psmt.setString(1, email);
+			cnt = psmt.executeUpdate();
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close();
+		}
+		return cnt;
+	}
+	public int DeleteOne(String num) {
+		conn();
+		
+		try {
+			String sql = "delete from Message where num=?";
+			psmt = conn.prepareStatement(sql);
+			psmt.setString(1, num);
+			cnt = psmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close();
+		}
+		return cnt;
+		
+	}
 
 }

@@ -20,11 +20,7 @@ import com.model.MemberDTO;
 @WebServlet("/JoinServiceCon")
 public class JoinServiceCon extends HttpServlet {
 
-
-	
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		
 		
 		request.setCharacterEncoding("EUC-KR");
 		String email = request.getParameter("email");

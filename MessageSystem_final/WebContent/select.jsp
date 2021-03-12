@@ -1,3 +1,6 @@
+<%@page import="com.model.MemberDTO"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="com.model.MemberDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!-- 1.request영역에 저장된 정보를 가져오시오. -->
 
@@ -17,6 +20,13 @@
 	
 	</style>
 	<body style="text-align: center;">
+	
+	<%
+		MemberDAO dao = new MemberDAO();
+		ArrayList<MemberDTO> list = dao.select();
+		
+		
+	%>
 		<!-- Wrapper -->
 			<div id="wrapper">
 				<!-- Menu -->
@@ -28,6 +38,15 @@
 								<td>Tel</td>
 								<td>Address</td>							
 							</tr>
+							
+							<%for(int i =0; i<list.size(); i++){ %>
+								<tr>
+									<td><%=list.get(i).getEmail() %></td>
+									<td><%=list.get(i).getTel() %></td>
+									<td><%=list.get(i).getAddr() %></td>							
+							</tr>
+							
+							<%} %>
 							<!-- 2.모든 회원의 이메일(email),전화번호(tel),주소(address)를 출력하시오. -->
 						</table>
 					</nav>		

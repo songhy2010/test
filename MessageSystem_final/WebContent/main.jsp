@@ -1,3 +1,5 @@
+<%@page import="com.model.MessageDTO"%>
+<%@page import="com.model.MessageDAO"%>
 <%@page import="com.model.MemberDTO"%>
 <%@page import="java.util.ArrayList"%>
 
@@ -18,6 +20,14 @@
 
 	<%
 		MemberDTO info = (MemberDTO)session.getAttribute("info");
+		MessageDAO dao = new MessageDAO();
+		
+		ArrayList<MessageDTO> mList = null;
+		if(info != null){
+			mList = dao.select(info.getEmail());
+		}
+		
+	
 	%>
 	<%
 		
@@ -31,8 +41,13 @@
 		<a href="index.html" class="logo"><strong>Forty</strong> <span>by HTML5 UP</span></a> 
 		<nav>
 			<%if(info != null) { %>
-				<a href ="update.jsp">개인정보수정</a>
-				<a href ="LogoutServiceCon">로그아웃</a>
+			
+				<%if(info.getEmail().equals("admin")){ %>
+					<a href = "select.jsp">회원정보관리</a>
+				<%} %>
+					<a href ="update.jsp">개인정보수정</a>
+					<a href ="LogoutServiceCon">로그아웃</a>
+				
 			<%}else{ %>
 				<a href ="#menu">로그인</a>
 			<%} %>
@@ -140,9 +155,36 @@
 				</header>
 				<p></p>
 				<ul class="actions">
+				<%if(info != null){%>
+				<li><%=info.getEmail() %>님의 메시지함</li>
+
+				<%}else{ %>
 					<li>로그인을 하세요.</li>
-					<li><a href="#" class="button next scrolly">전체삭제하기</a></li>
+			
+				<%} %>
+					<li><a href="DelAllServiceCon" class="button next scrolly">전체삭제하기</a></li>
 				</ul>
+				
+				<table>
+					<tr>
+						<td>번호</td>
+						<td>보낸사람</td>
+						<td>내용</td>
+						<td>보낸시간</td>
+						<td>비고</td>
+					</tr>
+					<%if(mList != null){ %>
+						<%for(int i = 0; i<mList.size(); i++){ %>
+					<tr>
+						<td><%=i+1 %></td>
+						<td><%=mList.get(i).getSend() %></td>
+						<td><%=mList.get(i).getContent() %></td>
+						<td><%=mList.get(i).getDate() %></td>
+						<td><a href = 'DelOneServiceCon?num=<%=mList.get(i).getNum()%>'>삭제</a></td>
+					</tr>
+					<%} }%>
+				</table>
+				
 			</div>
 			</section>
 
@@ -152,19 +194,19 @@
 		<section id="contact">
 		<div class="inner">
 			<section>
-			<form>
+			<form action = "MessageServiceCon" method = "post">
 				<div class="field half first">
 					<label for="name">Name</label> <input type="text" id="name"
-						placeholder="보내는 사람 이름" />
+						placeholder="받는 사람 이름" name = "receive"/>
 				</div>
 				<div class="field half">
 					<label for="email">Email</label> <input type="text" id="email"
-						placeholder="보낼 사람 이메일" />
+						placeholder="보낼 사람 이메일" name = "send"/>
 				</div>
 
 				<div class="field">
 					<label for="message">Message</label>
-					<textarea id="message" rows="6"></textarea>
+					<textarea id="message" rows="6" name = "content"></textarea>
 				</div>
 				<ul class="actions">
 					<li><input type="submit" value="Send Message" class="special" /></li>
